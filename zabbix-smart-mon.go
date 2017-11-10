@@ -180,7 +180,7 @@ func getSMARTinfo() []map[string]string {
     devList := getDisksList()
 
     for _, dev := range devList {
-        out := execute("smartctl -A " + dev)
+        out := execute("/usr/sbin/smartctl -A " + dev)
 
         readFlag := false
         var names []string
@@ -215,7 +215,7 @@ func getSMARTinfo() []map[string]string {
 }
 
 func getDisksList() []string {
-    out := execute("smartctl --scan")
+    out := execute("/usr/sbin/smartctl --scan")
 
     var rv []string
 
