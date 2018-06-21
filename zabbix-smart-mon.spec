@@ -7,11 +7,12 @@
 Summary: SMART Monitoring for Zabbix
 Name: zabbix-smart-mon
 Version: 1.0
-Release: 1
+Release: 2
 License: WTFPL
 Group: System Environment/Daemons
 Source0: %{name}.go
 Source1: %{name}.cron
+Source2: %{name}.conf
 Source3: gopkgs.tar.gz
 ExclusiveArch: x86_64
 Requires: zabbix-sender >= 2.4, smartmontools
@@ -39,7 +40,9 @@ install -d %{buildroot}%{_bindir}
 cp -f ${RPM_BUILD_DIR}/%{name} %{buildroot}%{_bindir}/%{name}
 install -d %{buildroot}/var/log/%{name}
 install -d %{buildroot}/etc/cron.d
+install -d %{buildroot}/etc/logrotate.d
 cp -f %{SOURCE1}  %{buildroot}/etc/cron.d/zabbix-smart-mon
+cp -f %{SOURCE2}  %{buildroot}/etc/logrotate.d/%{name}
 
 %clean
 rm -rf %{buildroot}
@@ -49,6 +52,7 @@ rm -rf %{buildroot}
 %{_bindir}/%{name}
 %dir /var/log/%{name}
 /etc/cron.d/zabbix-smart-mon
+/etc/logrotate.d/%{name}
 
 %post
 sed -i "s/^0/`hostid | perl -0ne 'print hex($_) % 60'`/" /etc/cron.d/zabbix-smart-mon
