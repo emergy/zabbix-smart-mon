@@ -1,1 +1,1 @@
-0 * * * * root /usr/bin/zabbix-smart-mon -l /var/log/zabbix-smart-mon/zabbix-smart-mon.log
+0 * * * * root /usr/bin/zabbix-smart-mon -l /var/log/zabbix-smart-mon/zabbix-smart-mon.log send

@@ -6,25 +6,25 @@
 
 Summary: SMART Monitoring for Zabbix
 Name: zabbix-smart-mon
-Version: 1.0
+Version: 1.1
 Release: 2
 License: WTFPL
 Group: System Environment/Daemons
-Source0: %{name}.go
+Source0: %{name}.src.tar.gz
 Source1: %{name}.cron
 Source2: %{name}.conf
 Source3: gopkgs.tar.gz
 ExclusiveArch: x86_64
 Requires: zabbix-sender >= 2.4, smartmontools
-BuildRequires: golang
+BuildRequires: golang, gcc
 
 %description
 SMART Monitoring for Zabbix
 
 %prep
 tar -C ${RPM_BUILD_DIR} -xzf %{SOURCE3}
-mkdir -p ${RPM_BUILD_DIR}/go/src/%{name}
-cp -f %{SOURCE0} ${RPM_BUILD_DIR}/go/src/%{name}
+mkdir -p ${RPM_BUILD_DIR}/go/src
+tar xzvf %{SOURCE0} -C ${RPM_BUILD_DIR}/go/src/
 
 %build
 export GOARCH="amd64"
@@ -33,11 +33,13 @@ export GOTOOLDIR="/usr/local/go/pkg/tool/linux_amd64"
 export GOPATH="${RPM_BUILD_DIR}/go"
 export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
 
-go build -a -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" -v -x %{name}
+cd ${RPM_BUILD_DIR}/go/src/%{name}
+go build -a -ldflags "-B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')" -v -x .
 
 %install
 install -d %{buildroot}%{_bindir}
-cp -f ${RPM_BUILD_DIR}/%{name} %{buildroot}%{_bindir}/%{name}
+#cp -f ${RPM_BUILD_DIR}/%{name} %{buildroot}%{_bindir}/%{name}
+cp -f ${RPM_BUILD_DIR}/go/src/%{name}/%{name} %{buildroot}%{_bindir}/%{name}
 install -d %{buildroot}/var/log/%{name}
 install -d %{buildroot}/etc/cron.d
 install -d %{buildroot}/etc/logrotate.d
